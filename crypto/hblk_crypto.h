@@ -4,6 +4,9 @@
 #include <stdint.h>
 /* stdint types will maintain size regardless architecture */
 #include <openssl/sha.h>
+/* For the EC materials */
+#include <openssl/ec.h>
+#include <openssl/obj_mac.h>
 
 #define EC_CURVE NID_secp256k1
 
@@ -33,5 +36,6 @@ typedef struct sig_s
 /* Protozo-aires */
 uint8_t *sha256(int8_t const *s, size_t len,
 				uint8_t digest[SHA256_DIGEST_LENGTH]);
+EC_KEY *ec_create(void);
 
 #endif /* __HBTN_CRYPTO__ */
