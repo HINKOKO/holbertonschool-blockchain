@@ -4,7 +4,7 @@
 
 <i>At the end of this project, you are expected to be able to explain to anyone, without the help of Google:</i>
 
-- How a Blockchain is considered “unbreakable”
+- [How a Blockchain is considered “unbreakable”](./Learnings.md#1)
 - What is a hash algorithm
 - What SHA stands for
 - How hash algorithms apply to Blockchains
