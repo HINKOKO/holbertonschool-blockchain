@@ -12,7 +12,7 @@ EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN])
 	EC_POINT *public_key = NULL;
 	EC_KEY *new_ec = EC_KEY_new_by_curve_name(EC_CURVE);
 
-	if (!new_ec)
+	if (!new_ec || !pub)
 		return (NULL);
 
 	/* Creates an EC_POINT from the pub key bytes */
