@@ -36,6 +36,9 @@ typedef struct sig_s
 	uint8_t len;
 } sig_t;
 
+/* forcing proto of ec.h lib */
+void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
+
 /* Protozo-aires */
 uint8_t *sha256(int8_t const *s, size_t len,
 				uint8_t digest[SHA256_DIGEST_LENGTH]);
