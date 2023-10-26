@@ -1,6 +1,10 @@
 #include "hblk_crypto.h"
 
+#include <string.h>
 #include <openssl/ecdsa.h>
+#include <openssl/ec.h>
+
+void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
 
 /**
  * ec_sign - signs a given set of bytes, using EC_KEY privkey
