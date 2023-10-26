@@ -13,29 +13,29 @@
 
 EC_KEY *ec_load(char const *folder)
 {
-	/* construct the paths */
-	char priv_path[256], pub_path[256];
-	EC_KEY *key_pair, *pubkey;
-	FILE *fpriv, *fpub;
-
-	snprintf(priv_path, sizeof(priv_path), "%s%s", folder, "key.pem");
-	snprintf(pub_path, sizeof(pub_path), "%s%s", folder, "key_pub.pem");
+	char path[256] = {0};
+	EC_KEY *key_pair = NULL;
+	FILE *fkey;
 
 	if (!folder)
 		return (NULL);
-
-	fpriv = fopen(priv_path, "r");
-	key_pair = PEM_read_ECPrivateKey(fpriv, NULL, NULL, NULL);
-	fclose(fpriv);
-
-	fpub = fopen(pub_path, "r");
-	pubkey = PEM_read_EC_PUBKEY(fpub, NULL, NULL, NULL);
-	fclose(fpub);
-
-	/* set Public Key in EC_KEy struct => stderr specified NULL */
-	/* provided to ec_to_pub() <= wasn't set ? */
-	EC_KEY_set_public_key(key_pair, EC_KEY_get0_public_key(pubkey));
-
-	EC_KEY_free(pubkey);
+	/* concatene path */
+	sprintf(path, "%s/" PRI_FILENAME, folder);
+	fkey = fopen(path, "r");
+	if (!PEM_read_ECPrivateKey(fkey, &key_pair, NULL, NULL))
+	{
+		EC_KEY_free(key_pair);
+		return (NULL);
+	}
+	fclose(fkey);
+	/* concatene again, buffer will be flushed */
+	sprintf(path, "%s/" PUB_FILENAME, folder);
+	fkey = fopen(path, "r");
+	if (!PEM_read_EC_PUBKEY(fkey, &key_pair, NULL, NULL))
+	{
+		EC_KEY_free(key_pair);
+		fclose(fkey);
+		return (NULL);
+	}
 	return (key_pair);
 }
