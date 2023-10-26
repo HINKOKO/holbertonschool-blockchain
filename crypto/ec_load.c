@@ -15,27 +15,27 @@ EC_KEY *ec_load(char const *folder)
 {
 	/* construct the paths */
 	char priv_path[256], pub_path[256];
-	EC_KEY *eckey = EC_KEY_new();
+	EC_KEY *key_pair, *pubkey;
 	FILE *fpriv, *fpub;
 
 	snprintf(priv_path, sizeof(priv_path), "%s%s", folder, "key.pem");
 	snprintf(pub_path, sizeof(pub_path), "%s%s", folder, "key_pub.pem");
 
-	if (!folder || !eckey)
+	if (!folder)
 		return (NULL);
 
 	fpriv = fopen(priv_path, "r");
-	eckey = PEM_read_ECPrivateKey(fpriv, &eckey, NULL, NULL);
+	key_pair = PEM_read_ECPrivateKey(fpriv, NULL, NULL, NULL);
 	fclose(fpriv);
 
 	fpub = fopen(pub_path, "r");
-	eckey = PEM_read_EC_PUBKEY(fpub, &eckey, NULL, NULL);
+	pubkey = PEM_read_EC_PUBKEY(fpub, NULL, NULL, NULL);
 	fclose(fpub);
 
 	/* set Public Key in EC_KEy struct => stderr specified NULL */
 	/* provided to ec_to_pub() <= wasn't set ? */
-	EC_KEY_set_public_key(eckey, EC_KEY_get0_public_key(eckey));
+	EC_KEY_set_public_key(key_pair, EC_KEY_get0_public_key(pubkey));
 
-	EC_KEY_free(eckey);
-	return (eckey);
+	EC_KEY_free(pubkey);
+	return (key_pair);
 }
