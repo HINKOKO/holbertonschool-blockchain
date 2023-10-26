@@ -3,6 +3,7 @@
 #include <string.h>
 #include <openssl/ecdsa.h>
 #include <openssl/ec.h>
+#include <openssl/evp.h>
 
 void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
 
