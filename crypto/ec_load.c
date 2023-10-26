@@ -13,18 +13,18 @@
 
 EC_KEY *ec_load(char const *folder)
 {
-	EC_KEY *eckey = NULL;
+	EC_KEY *eckey = EC_KEY_new();
 	FILE *fpriv = NULL, *fpub = NULL;
 
-	if (!folder)
+	if (!folder || !eckey)
 		return (NULL);
 
 	fpriv = fopen(folder, "r");
-	eckey = PEM_read_ECPrivateKey(fpriv, NULL, NULL, NULL);
+	eckey = PEM_read_ECPrivateKey(fpriv, &eckey, NULL, NULL);
 	fclose(fpriv);
 
 	fpub = fopen(folder, "r");
-	eckey = PEM_read_EC_PUBKEY(fpub, NULL, NULL, NULL);
+	eckey = PEM_read_EC_PUBKEY(fpub, &eckey, NULL, NULL);
 	fclose(fpub);
 
 	EC_KEY_free(eckey);
