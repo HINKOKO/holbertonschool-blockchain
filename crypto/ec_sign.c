@@ -1,5 +1,7 @@
 #include "hblk_crypto.h"
 
+#include <openssl/ecdsa.h>
+
 /**
  * ec_sign - signs a given set of bytes, using EC_KEY privkey
  * @key: pointer to EC_KEY struct holding private key
