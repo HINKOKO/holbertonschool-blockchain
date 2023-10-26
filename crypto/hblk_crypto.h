@@ -2,11 +2,13 @@
 #define __HBTN_CRYPTO__
 
 #include <stdint.h>
+#include <string.h>
 /* stdint types will maintain size regardless architecture */
 #include <openssl/sha.h>
 /* For the EC materials */
 #include <openssl/ec.h>
 #include <openssl/obj_mac.h>
+#include <openssl/ecdsa.h>
 
 /* Bitcoin curve y^2 = x^3 + 7 */
 #define EC_CURVE NID_secp256k1
