@@ -1,6 +1,6 @@
 #include "hblk_crypto.h"
 
-#define FAILHAPPENED 33
+#define FAILHAPPENED 0
 
 /**
  * ec_verify - verifies the signature of a given set of bytes
@@ -16,7 +16,7 @@ int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 			  sig_t const *sig)
 {
 	/* sanity checks */
-	if (!key || !msg || !sig)
+	if (!key || !msg || !sig || sig->len == 0)
 		return (FAILHAPPENED);
 	if (ECDSA_verify(0, msg, msglen, sig->sig, sig->len, (EC_KEY *)key) != 1)
 		return (FAILHAPPENED);
