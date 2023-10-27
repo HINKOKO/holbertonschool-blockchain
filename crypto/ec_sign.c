@@ -1,11 +1,6 @@
 #include "hblk_crypto.h"
 
 #include <string.h>
-#include <openssl/ecdsa.h>
-#include <openssl/ec.h>
-#include <openssl/evp.h>
-
-void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
 
 /**
  * ec_sign - signs a given set of bytes, using EC_KEY privkey
@@ -20,30 +15,13 @@ void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
 uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 				 sig_t *sig)
 {
-	ECDSA_SIG *ecdsa = NULL;
-	const BIGNUM *r, *s;
-	unsigned char *tmp_sig = NULL, *p = NULL;
-	int sig_len = 0;
+	/* we don't know yet the sig len */
+	unsigned int sig_len = 0;
 
-	ecdsa = ECDSA_do_sign(msg, msglen, (EC_KEY *)key);
-	ECDSA_SIG_get0(ecdsa, &r, &s);
-
-	sig_len = i2d_ECDSA_SIG(ecdsa, NULL);
-	if (sig_len <= 0 || (size_t)sig_len > sizeof(sig->sig))
-	{
-		ECDSA_SIG_free(ecdsa);
+	if (ECDSA_sign(0, msg, msglen, sig->sig, &sig_len, (EC_KEY *)key) != 1)
 		return (NULL);
-	}
-	tmp_sig = OPENSSL_malloc(sig_len);
+
 	sig->len = (uint8_t)sig_len;
-
-	p = tmp_sig;
-	i2d_ECDSA_SIG(ecdsa, &p);
-
-	memcpy(sig->sig, tmp_sig, sig->len);
-
-	OPENSSL_free(tmp_sig);
-	ECDSA_SIG_free(ecdsa);
 
 	return (sig->sig);
 }
