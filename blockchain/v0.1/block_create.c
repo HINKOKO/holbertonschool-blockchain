@@ -23,7 +23,7 @@ block_t *block_create(block_t const *prev, int8_t const *data,
 	new->info.index = prev->info.index + 1;
 	new->info.difficulty = new->info.nonce = 0;
 	new->info.timestamp = time(NULL);
-	memcpy(&(new->info.prev_hash), prev->info.prev_hash, SHA256_DIGEST_LENGTH);
+	memcpy(&(new->info.prev_hash), prev->hash, SHA256_DIGEST_LENGTH);
 	memcpy(&(new->data.buffer), data, MIN(data_len, BLOCKCHAIN_DATA_MAX));
 	memset(&(new->hash), 0x0, SHA256_DIGEST_LENGTH);
 
