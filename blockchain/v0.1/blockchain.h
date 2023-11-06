@@ -71,8 +71,10 @@ typedef struct block_s
 	uint8_t hash[SHA256_DIGEST_LENGTH];
 } block_t;
 
-/* Prototypes */
+/* Prototypes -- Task 0 */
+block_t *init_genesis(uint32_t idx);
 blockchain_t *blockchain_create(void);
+/* TAsk 1 */
 block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);
 void block_destroy(block_t *block);
 void blockchain_destroy(blockchain_t *blockchain);
