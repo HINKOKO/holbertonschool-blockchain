@@ -2,6 +2,7 @@
 #define __BCHAIN_STRUCT__
 
 #define BLOCKCHAIN_DATA_MAX 1024
+#define MIN(a, b) ((a) > (b) ? (a) : (b))
 
 #include "../../crypto/hblk_crypto.h"
 /* Linked list lib */
