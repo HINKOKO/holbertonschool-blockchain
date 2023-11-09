@@ -12,6 +12,11 @@
 #include <stdlib.h>
 /* To maintain same sizes on != architectures */
 #include <stdint.h>
+/* For low-level ops of writing, opening */
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /**
  * struct blockchain_s - Blockchain structure
@@ -48,7 +53,7 @@ typedef struct block_info_s
 /**
  * struct block_data_s - Block data structure
  * @buffer: Data buffer
- * Buffer hold up to 1024 element,each being signed 8-bit int
+ * Buffer hold up to 1024 element, each being signed 8-bit int
  * @len: Data size (bytes)
  * buffer must stay first (array of chars usage
  * to remain possible)
@@ -75,11 +80,13 @@ typedef struct block_s
 /* Prototypes -- Task 0 */
 block_t *init_genesis(uint32_t idx);
 blockchain_t *blockchain_create(void);
-/* TAsk 1 */
-block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);
+/* Following tasks */
+block_t *block_create(block_t const *prev, int8_t const *data,
+					  uint32_t data_len);
 void block_destroy(block_t *block);
 void blockchain_destroy(blockchain_t *blockchain);
-uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+uint8_t *block_hash(block_t const *block,
+					uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 blockchain_t *blockchain_deserialize(char const *path);
 int block_is_valid(block_t const *block, block_t const *prev_block);
