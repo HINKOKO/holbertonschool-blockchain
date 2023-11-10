@@ -4,12 +4,16 @@
 #define BLOCKCHAIN_DATA_MAX 1024
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#define HBLK_MAGIC "HBLK"
+#define HBLK_VERSION "0.1"
+
 #include "../../crypto/hblk_crypto.h"
 /* Linked list lib */
 #include <llist.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 /* To maintain same sizes on != architectures */
 #include <stdint.h>
 /* For low-level ops of writing, opening */
