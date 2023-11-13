@@ -17,9 +17,14 @@ int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 		return (0);
 	for (i = 0; i < difficulty / 8; i++)
 		if (hash[i] != 0)
-			return (0); /* Hash does not has required numbers of zeros */
-	/* if difficulty not multiple of 8 bits */
-	if (difficulty % 8 != 0 && (hash[difficulty / 8] >> (8 - difficulty % 8)) != 0)
+			return (0);
+
+	/* if difficulty not multiple of 8 bits => we are in deep trouble */
+	/* hash[diff / 8] to retrieve the last byte to be checked as a singleton */
+	/* >> shifting bits to right by amount equal to the number of bits */
+	/* needed to be checked in the 'last byte' */
+	if (difficulty % 8 != 0 &&
+		(hash[difficulty / 8] >> (8 - difficulty % 8)) != 0)
 		return (0);
 
 	return (1);
