@@ -46,7 +46,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		memcmp(hash_comparator, block->hash, SHA256_DIGEST_LENGTH) != 0)
 		return (1);
 	/* Using our new match_difficulty functionality to extend validation */
-	if (!hash_matches_difficulty(block->hash, prev_block->info.difficulty))
+	if (!hash_matches_difficulty(block->hash, block->info.difficulty))
 		return (1);
 
 	if (block->data.len > BLOCKCHAIN_DATA_MAX)
