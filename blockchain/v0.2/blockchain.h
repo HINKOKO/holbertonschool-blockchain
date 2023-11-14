@@ -7,6 +7,12 @@
 #define HBLK_MAGIC "HBLK"
 #define HBLK_VERSION "0.2"
 
+/* For computing difficulty */
+/* How often in seconds a block should be found */
+#define BLOCK_GENERATION_INTERVAL 1
+/* How often (in Blocks) the difficulty should be adjusted */
+#define DIFFICULTY_ADJUSTMENT_INTERVAL 5
+
 #include "../../crypto/hblk_crypto.h"
 /* Linked list lib */
 #include <llist.h>
