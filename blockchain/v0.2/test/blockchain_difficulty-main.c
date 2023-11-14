@@ -3,6 +3,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#define MINERS "\033[31m"
+#define RESET "\033[0m"
+
 #include "../blockchain.h"
 
 void _blockchain_print_brief(blockchain_t *blockchain);
@@ -21,7 +24,7 @@ static void *_add_block(blockchain_t *bchain, block_t const *prev,
 	block_t *block;
 
 	usleep(300000); /* Simulate block mining... */
-	printf("\tMining process..\n");
+	printf("%s\tMining process...%s\n", MINERS, RESET);
 	fflush(stdout);
 
 	block = block_create(prev, (int8_t *)s, (uint32_t)strlen(s));
