@@ -1,8 +1,8 @@
 #ifndef _ENDIANNESS_H_
-#define _ENDIANNESS_H_
+# define _ENDIANNESS_H_
 
-#include <stdint.h>
-#include <stddef.h>
+# include <stdint.h>
+# include <stddef.h>
 
 /*
  * # include <stdint.h>
@@ -25,12 +25,10 @@
  *				((value & 0x00000000000000FFULL) << 56))
  */
 
-#define SWAPENDIAN(value) _swap_endian((char *)(&value), sizeof(value))
+# define SWAPENDIAN(value)	_swap_endian((char *)(&value), sizeof(value))
 
 /**
  * union _endian_u - Used to test endianness
- * union allows us to use only one member at a time
- * a struct would warn
  *
  * @value: 32-bit value
  * @bytes: 4 bytes array
@@ -41,7 +39,7 @@ typedef union _endian_u
 	uint8_t bytes[4];
 } _endian_t;
 
-uint8_t _get_endianness(void);
+uint8_t	_get_endianness(void);
 void _swap_endian(void *p, size_t size);
 
 #endif /* ! _ENDIANNESS_H_ */

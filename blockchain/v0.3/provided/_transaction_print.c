@@ -6,7 +6,7 @@
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 
 static int _tx_in_print(tx_in_t const *in, unsigned int idx,
-						char const *indent)
+	char const *indent)
 {
 	printf("%s\t\t{\n", indent);
 
@@ -33,7 +33,7 @@ static int _tx_in_print(tx_in_t const *in, unsigned int idx,
 }
 
 static int _tx_out_print(tx_out_t const *out, unsigned int idx,
-						 char const *indent)
+	char const *indent)
 {
 	printf("%s\t\t{\n", indent);
 
@@ -52,7 +52,7 @@ static int _tx_out_print(tx_out_t const *out, unsigned int idx,
 }
 
 int _transaction_print_loop(transaction_t const *transaction,
-							unsigned int idx, char const *indent)
+	unsigned int idx, char const *indent)
 {
 	if (!transaction)
 		return (0);
@@ -61,11 +61,11 @@ int _transaction_print_loop(transaction_t const *transaction,
 
 	printf("%s\tinputs [%u]: [\n", indent, llist_size(transaction->inputs));
 	llist_for_each(transaction->inputs, (node_func_t)_tx_in_print,
-				   (void *)indent);
+		(void *)indent);
 	printf("%s\t],\n", indent);
 	printf("%s\toutputs [%u]: [\n", indent, llist_size(transaction->outputs));
 	llist_for_each(transaction->outputs, (node_func_t)_tx_out_print,
-				   (void *)indent);
+		(void *) indent);
 	printf("%s\t],\n", indent);
 	printf("%s\tid: ", indent);
 	_print_hex_buffer(transaction->id, sizeof(transaction->id));
