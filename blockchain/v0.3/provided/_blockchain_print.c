@@ -2,12 +2,13 @@
 #include <string.h>
 
 #include "blockchain.h"
+#include "transaction.h"
 
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 int _transaction_print_loop(transaction_t const *transaction,
-	unsigned int idx, char const *indent);
+							unsigned int idx, char const *indent);
 int _transaction_print_brief_loop(transaction_t const *transaction,
-	unsigned int idx, char const *indent);
+								  unsigned int idx, char const *indent);
 
 /**
  * _block_print - Prints information about a Block
@@ -19,7 +20,7 @@ int _transaction_print_brief_loop(transaction_t const *transaction,
  * Return: FOREACH_CONTINUE
  */
 static int _block_print(block_t const *block, unsigned int index,
-	char const *indent)
+						char const *indent)
 {
 	char indent2[10] = {0};
 
@@ -46,11 +47,11 @@ static int _block_print(block_t const *block, unsigned int index,
 	printf("%s\t},\n", indent);
 
 	printf("%s\ttransactions [%d]: [\n", indent,
-		llist_size(block->transactions));
+		   llist_size(block->transactions));
 	memcpy(indent2, indent, strlen(indent));
 	memcpy(indent2 + strlen(indent), "\t\t", 2);
 	llist_for_each(block->transactions,
-		(node_func_t)_transaction_print_loop, (void *)indent2);
+				   (node_func_t)_transaction_print_loop, (void *)indent2);
 	printf("%s\t]\n", indent);
 
 	printf("%s\thash: ", indent);
@@ -72,7 +73,7 @@ static int _block_print(block_t const *block, unsigned int index,
  * Return: FOREACH_CONTINUE
  */
 static int _block_print_brief(block_t const *block, unsigned int index,
-	char const *indent)
+							  char const *indent)
 {
 	char indent2[10] = {0};
 
@@ -98,11 +99,11 @@ static int _block_print_brief(block_t const *block, unsigned int index,
 	printf(" },\n");
 
 	printf("%s\ttransactions [%d]: [\n", indent,
-		llist_size(block->transactions));
+		   llist_size(block->transactions));
 	memcpy(indent2, indent, strlen(indent));
 	memcpy(indent2 + strlen(indent), "\t\t", 2);
 	llist_for_each(block->transactions,
-		(node_func_t)_transaction_print_brief_loop, (void *)indent2);
+				   (node_func_t)_transaction_print_brief_loop, (void *)indent2);
 	printf("%s\t]\n", indent);
 
 	printf("%s\thash: ", indent);
@@ -125,7 +126,7 @@ void _blockchain_print(blockchain_t const *blockchain)
 
 	printf("\tchain [%d]: [\n", llist_size(blockchain->chain));
 	llist_for_each(blockchain->chain,
-		(node_func_t)_block_print, "\t\t");
+				   (node_func_t)_block_print, "\t\t");
 	printf("\t]\n");
 
 	printf("}\n");
@@ -143,7 +144,7 @@ void _blockchain_print_brief(blockchain_t const *blockchain)
 
 	printf("\tchain [%d]: [\n", llist_size(blockchain->chain));
 	llist_for_each(blockchain->chain,
-		(node_func_t)_block_print_brief, "\t\t");
+				   (node_func_t)_block_print_brief, "\t\t");
 	printf("\t]\n");
 
 	printf("}\n");
