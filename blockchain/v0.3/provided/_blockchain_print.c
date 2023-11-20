@@ -3,21 +3,11 @@
 
 #include "blockchain.h"
 
-/**
- * _print_hex_buffer - Prints a buffer in its hexadecimal form
- *
- * @buf: Pointer to the buffer to be printed
- * @len: Number of bytes from @buf to be printed
- */
-static void _print_hex_buffer(uint8_t const *buf, size_t len)
-{
-	size_t i;
-
-	for (i = 0; buf && i < len; i++)
-		printf("%02x", buf[i]);
-
-	fflush(NULL);
-}
+void _print_hex_buffer(uint8_t const *buf, size_t len);
+int _transaction_print_loop(transaction_t const *transaction,
+							unsigned int idx, char const *indent);
+int _transaction_print_brief_loop(transaction_t const *transaction,
+								  unsigned int idx, char const *indent);
 
 /**
  * _block_print - Prints information about a Block
@@ -31,6 +21,8 @@ static void _print_hex_buffer(uint8_t const *buf, size_t len)
 static int _block_print(block_t const *block, unsigned int index,
 						char const *indent)
 {
+	char indent2[10] = {0};
+
 	if (!block)
 	{
 		printf("%snil\n", indent);
@@ -53,6 +45,14 @@ static int _block_print(block_t const *block, unsigned int index,
 	printf("%s\t\tlen: %u\n", indent, block->data.len);
 	printf("%s\t},\n", indent);
 
+	printf("%s\ttransactions [%d]: [\n", indent,
+		   llist_size(block->transactions));
+	memcpy(indent2, indent, strlen(indent));
+	memcpy(indent2 + strlen(indent), "\t\t", 2);
+	llist_for_each(block->transactions,
+				   (node_func_t)_transaction_print_loop, (void *)indent2);
+	printf("%s\t]\n", indent);
+
 	printf("%s\thash: ", indent);
 	_print_hex_buffer(block->hash, SHA256_DIGEST_LENGTH);
 
@@ -74,6 +74,8 @@ static int _block_print(block_t const *block, unsigned int index,
 static int _block_print_brief(block_t const *block, unsigned int index,
 							  char const *indent)
 {
+	char indent2[10] = {0};
+
 	if (!block)
 	{
 		printf("%snil\n", indent);
@@ -94,6 +96,14 @@ static int _block_print_brief(block_t const *block, unsigned int index,
 	printf("\"%s\", ", block->data.buffer);
 	printf("%u", block->data.len);
 	printf(" },\n");
+
+	printf("%s\ttransactions [%d]: [\n", indent,
+		   llist_size(block->transactions));
+	memcpy(indent2, indent, strlen(indent));
+	memcpy(indent2 + strlen(indent), "\t\t", 2);
+	llist_for_each(block->transactions,
+				   (node_func_t)_transaction_print_brief_loop, (void *)indent2);
+	printf("%s\t]\n", indent);
 
 	printf("%s\thash: ", indent);
 	_print_hex_buffer(block->hash, SHA256_DIGEST_LENGTH);
