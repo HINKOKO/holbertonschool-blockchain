@@ -19,7 +19,7 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 						  uint8_t hash_buf[SHA256_DIGEST_LENGTH])
 {
 	int i, offset = 0, all_inputs = 0, all_outputs = 0;
-	uint8_t *prehash = NULL;
+	int8_t *prehash = NULL;
 	size_t prehash_len = 0;
 	tx_in_t *temp_in = NULL;
 	tx_out_t *temp_out = NULL;
