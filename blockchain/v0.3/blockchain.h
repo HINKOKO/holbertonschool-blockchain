@@ -16,9 +16,11 @@
 /* Coinbase transaction */
 #define COINBASE_AMOUNT 50
 
+#include "./transaction/transaction.h"
 #include "../../crypto/hblk_crypto.h"
 /* Linked list lib */
 #include <llist.h>
+
 
 #include <stdio.h>
 #include <stdlib.h>
