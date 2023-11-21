@@ -18,9 +18,8 @@ unspent_tx_out_t *unspent_tx_out_create(uint8_t
 	if (!utxo || !block_hash || !tx_id || !out)
 		return (NULL);
 
-	memcpy(utxo->block_hash, &block_hash, SHA256_DIGEST_LENGTH);
-	memcpy(utxo->tx_id, &tx_id, SHA256_DIGEST_LENGTH);
-	memcpy(&(utxo->out), &out, sizeof(*out));
-
+	memcpy(utxo->block_hash, block_hash, SHA256_DIGEST_LENGTH);
+	memcpy(utxo->tx_id, tx_id, SHA256_DIGEST_LENGTH);
+	memcpy(&(utxo->out), out, sizeof(utxo->out));
 	return (utxo);
 }
