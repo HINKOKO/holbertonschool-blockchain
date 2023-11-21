@@ -45,5 +45,6 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 		offset += OUTPUTS;
 	}
 	sha256(prehash, prehash_len, hash_buf);
+	free(prehash);
 	return (hash_buf);
 }
