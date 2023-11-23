@@ -21,7 +21,6 @@
 /* Linked list lib */
 #include <llist.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,6 +58,7 @@
 typedef struct blockchain_s
 {
 	llist_t *chain;
+	llist_t *unspent;
 } blockchain_t;
 
 /**
