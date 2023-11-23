@@ -49,7 +49,6 @@ int main(void)
 	/* Create transaction */
 	transaction = transaction_create(sender, receiver, 500, all_unspent);
 	_transaction_print(transaction);
-	printf("Do you pass over here ? \n");
 
 	/* Cleanup */
 	EC_KEY_free(sender);
