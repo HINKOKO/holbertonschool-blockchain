@@ -23,7 +23,7 @@ transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index)
 	if (!tx_coin)
 		return (NULL);
 	txin = calloc(1, sizeof(*txin));
-	if (!txin || !receiver || !block_index)
+	if (!txin || !receiver)
 	{
 		free(tx_coin);
 		return (NULL);
