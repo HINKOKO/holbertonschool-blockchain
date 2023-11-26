@@ -61,7 +61,7 @@ int main(void)
 	/* Sign transaction input with transaction hash */
 	tx_in_sign(in, transaction.id, owner, all_unspent);
 	_transaction_print(&transaction);
-	if (transaction_is_valid(&transaction, all_unspent))
+	if (transaction_is_valid(&transaction, all_unspent) == 1)
 		printf("Transaction valid\n");
 	else
 		fprintf(stderr, "Transaction invalid\n");
