@@ -46,7 +46,7 @@ blockchain_t *blockchain_create(void)
 {
 	blockchain_t *new_blockchain = NULL;
 	block_t *gen = NULL;
-	llist_t *list = NULL, *unspent = NULL;
+	llist_t *list = NULL, *unspent_list = NULL;
 
 	new_blockchain = calloc(1, sizeof(*new_blockchain));
 	/* Example compiled with '-pthread' -> we enable multithreading */
