@@ -46,11 +46,12 @@ blockchain_t *blockchain_create(void)
 {
 	blockchain_t *new_blockchain = NULL;
 	block_t *gen = NULL;
-	llist_t *list = NULL;
+	llist_t *list = NULL, *unspent = NULL;
 
 	new_blockchain = calloc(1, sizeof(*new_blockchain));
 	/* Example compiled with '-pthread' -> we enable multithreading */
 	list = llist_create(MT_SUPPORT_TRUE);
+	unspent_list = llist_create(MT_SUPPORT_TRUE);
 
 	if (!new_blockchain || !list)
 		return (NULL);
@@ -64,5 +65,6 @@ blockchain_t *blockchain_create(void)
 		return (NULL);
 	}
 	new_blockchain->chain = list;
+	new_blockchain->unspent = unspent_list;
 	return (new_blockchain);
 }
