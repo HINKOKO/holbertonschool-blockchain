@@ -19,14 +19,14 @@
 uint8_t *block_hash(block_t const *block,
 					uint8_t hash_buf[SHA256_DIGEST_LENGTH])
 {
-	/* When hashing a block, we hash info + data */
-	/* Now adding the list of transactions */
 	size_t full_len = 0, len = sizeof(block->info) + block->data.len;
-	int8_t *start, *buf;
+	int8_t *start = NULL, *buf = NULL;
 	transaction_t *tx = NULL;
 	int i;
 
-	full_len = len + llist_size(block->transactions) * SHA256_DIGEST_LENGTH;
+	full_len = len;
+	if (llist_size(block->transactions) > 0)
+		full_len += llist_size(block->transactions) * SHA256_DIGEST_LENGTH;
 	buf = calloc(1, full_len);
 	if (!buf)
 		return (NULL);
@@ -43,8 +43,7 @@ uint8_t *block_hash(block_t const *block,
 		buf += SHA256_DIGEST_LENGTH;
 	}
 	/* move pointer to start of buffer */
-	buf = start;
-	sha256(buf, full_len, hash_buf);
+	sha256(start, full_len, hash_buf);
 	free(start);
 	return (hash_buf);
 }
