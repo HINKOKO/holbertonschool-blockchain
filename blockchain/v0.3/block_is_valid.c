@@ -16,13 +16,13 @@ int check_unspent(block_t const *block, llist_t *unspent)
 	for (i = 0; i < llist_size(block->transactions); i++)
 	{
 		node = llist_get_node_at(block->transactions, i);
-		if (i == 0 && coinbase_is_valid(node, block->info.index))
+		if (i == 0 && !coinbase_is_valid(node, block->info.index))
 			return (1);
-		if (i > 0 && transaction_is_valid(node, unspent))
+		if (i > 0 && !transaction_is_valid(node, unspent))
 			return (1);
 	}
 	/* 'i' stucked at 0 means no transactions in block -> Bad */
-	return (i != 0);
+	return (i == 0);
 }
 
 /**
