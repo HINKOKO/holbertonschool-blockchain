@@ -70,7 +70,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block,
 		return (1);
 
 	/* Updated additional checks */
-	if (!check_unspent(block, all_unspent))
+	if (check_unspent(block, all_unspent))
 		return (1);
 
 	return (0);
