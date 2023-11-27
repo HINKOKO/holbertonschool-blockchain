@@ -1,12 +1,28 @@
 #include "blockchain.h"
 
-int check_tx(llist_node_t node, unsigned int idx, void *unspent)
+/**
+ * check_unspent - Iterates through utxos
+ * and check their validity
+ * @block: Pointer to block to verify
+ * @unspent: Pointer to list of unspent tx
+ * Return: 1 if ok, 0 otherwise
+ */
+
+int check_unspent(block_t const *block, llist_t *unspent)
 {
-	if (idx == 0)
-		return (0);
-	if (!transaction_is_valid(node, unspent))
-		return (1);
-	return (0);
+	int i;
+	transaction_t *node;
+
+	for (i = 0; i < llist_size(block->transactions); i++)
+	{
+		node = llist_get_node_at(block->transactions, i);
+		if (i == 0 && coinbase_is_valid(node, block->info.index))
+			return (1);
+		if (i > 0 && transaction_is_valid(node, unspent))
+			return (1);
+	}
+	/* 'i' stucked at 0 means no transactions in block -> Bad */
+	return (i == 0);
 }
 
 /**
@@ -38,26 +54,24 @@ int block_is_valid(block_t const *block, block_t const *prev_block,
 	if (block->info.index != prev_block->info.index + 1)
 		return (1);
 	if (!block_hash(prev_block, hash_comparator) ||
-		memcmp(hash_comparator, prev_block->hash, SHA256_DIGEST_LENGTH) ||
-		memcmp(prev_block->hash, block->info.prev_hash, SHA256_DIGEST_LENGTH) ||
-		!block_hash(block, hash_comparator))
+		memcmp(hash_comparator, prev_block->hash, SHA256_DIGEST_LENGTH))
+		return (1);
+	if (memcmp(prev_block->hash, block->info.prev_hash, SHA256_DIGEST_LENGTH))
+		return (1);
 
-		if (!block_hash(block, hash_comparator) ||
-			memcmp(hash_comparator, block->hash, SHA256_DIGEST_LENGTH) != 0)
-			return (1);
-	/* Using our new match_difficulty functionality to extend validation */
+	if (!block_hash(block, hash_comparator) ||
+		memcmp(hash_comparator, block->hash, SHA256_DIGEST_LENGTH) != 0)
+		return (1);
+
 	if (!hash_matches_difficulty(block->hash, block->info.difficulty))
 		return (1);
 
 	if (block->data.len > BLOCKCHAIN_DATA_MAX)
 		return (1);
+
 	/* Updated additional checks */
-	if (llist_size(block->transactions) < 1)
-		return (1);
-	if (!coinbase_is_valid(llist_get_head(block->transactions),
-						   block->info.index))
+	if (!check_unspent(block, all_unspent))
 		return (1);
 
 	return (0);
-	(void)all_unspent; /* DIsabled for the moment */
 }
