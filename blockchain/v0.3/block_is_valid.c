@@ -22,7 +22,7 @@ int check_unspent(block_t const *block, llist_t *unspent)
 			return (1);
 	}
 	/* 'i' stucked at 0 means no transactions in block -> Bad */
-	return (i == 0);
+	return (i != 0);
 }
 
 /**
