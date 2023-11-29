@@ -32,7 +32,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
 #define GENESIS                                                                \
 	{                                                                          \
 		{                                                                      \
@@ -116,6 +115,24 @@ typedef struct block_s
 	uint8_t hash[SHA256_DIGEST_LENGTH];
 } block_t;
 
+/**
+ * struct block_header_s - struct to hold and init header
+ * @magic: magic bytes identififcation
+ * @version: version bytes
+ * @endian: endianness of file
+ * @blocks: Number of blocks in the Bchain
+ * @unspent: Number of unspent tx outputs in the Bchain
+ */
+
+typedef struct block_header_s
+{
+	unsigned char magic[4];
+	unsigned char version[3];
+	unsigned char endian;
+	uint32_t blocks; /* 4 bytes 32 bits */
+	uint32_t unspent;
+} block_header_t;
+
 /* Prototypes -- Task 0 */
 block_t *init_genesis(uint32_t idx);
 blockchain_t *blockchain_create(void);
@@ -128,8 +145,8 @@ uint8_t *block_hash(block_t const *block,
 					uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 blockchain_t *blockchain_deserialize(char const *path);
-int block_is_valid(block_t const *block, block_t const *prev_block, llist_t *all_unspent);
-
+int block_is_valid(block_t const *block, block_t const *prev_block,
+				   llist_t *all_unspent);
 
 /* New Functions for v0.2/ Blockchain */
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
