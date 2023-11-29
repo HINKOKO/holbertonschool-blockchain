@@ -8,7 +8,7 @@
 
 void fread_transactions(block_t *block, FILE *fr)
 {
-	int32_t i, j, tx_size = 0, tx_in = 0, tx_out = 0;
+	int32_t i, j, tx_size, tx_in, tx_out;
 	transaction_t *t_node;
 	tx_in_t *in_node;
 	tx_out_t *out_node;
