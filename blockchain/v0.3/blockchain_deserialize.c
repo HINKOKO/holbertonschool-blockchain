@@ -13,7 +13,7 @@ void fread_transactions(block_t *block, FILE *fr)
 	tx_in_t *in_node;
 	tx_out_t *out_node;
 
-	fread(tx_size, 4, 1, fr);
+	fread(&tx_size, 4, 1, fr);
 	if (tx_size == -1)
 	{
 		block->transactions = NULL;
