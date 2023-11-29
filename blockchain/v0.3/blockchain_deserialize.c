@@ -41,6 +41,7 @@ void fread_transactions(block_t *block, FILE *fr)
 			fread(out_node, 101, 1, fr);
 			llist_add_node(t_node->outputs, out_node, ADD_NODE_REAR);
 		}
+		llist_add_node(block->transactions, t_node, ADD_NODE_REAR);
 	}
 }
 
@@ -94,7 +95,7 @@ blockchain_t *blockchain_deserialize(char const *path)
 		block = malloc(sizeof(block_t));
 		fread(block, 1, sizeof(block->info), fr);
 		fread(&block->data.len, 1, 4, fr);
-		memset(&block->data.buffer, 0, 1024);
+		memset(block->data.buffer, 0, 1024);
 		fread(&block->data.buffer, 1, block->data.len, fr);
 		fread(&block->hash, 32, 1, fr);
 		fread_transactions(block, fr);
