@@ -3,6 +3,20 @@
 
 uint8_t _get_endianness(void);
 
+/**
+ * fwrite_transactions - serialize the transactions to the file "path"
+ * @transactions: Points to Linked list of transactions
+ * @fp: file stream pointer
+ * Return: Nothing
+ * TRansactions are serialized as table described:
+ * -- Transaction ID (hash)
+ * -- Number of tx inputs
+ *		|__ list of tx inputs -- input "node" * 169 bytes
+ * -- Number ox tx outputs
+ *		|__ list of tx outputs -- output "node" * 101 bytes
+ * -- Then jump back to `blockchain_serialize` to finally fwrite the utxo's
+ */
+
 void fwrite_transactions(llist_t *transactions, FILE *fp)
 {
 	int i, j, tx_in, tx_out;
@@ -35,7 +49,7 @@ void fwrite_transactions(llist_t *transactions, FILE *fp)
 
 /**
  * header_init - Initialize the header_t struct
- *
+ * @header: Pointer to block_header struct
  */
 
 void header_init(block_header_t *header)
