@@ -1,44 +1,61 @@
 #include "blockchain.h"
 
-#define BUFSIZE 2048
-#define CLEAR_BUFF memset(buf, 0, BUFSIZE)
-#define CLEAR_N_LOAD(x) ((memset(buf, 0, BUFSIZE)), (read(fd, buf, x)))
-
-uint8_t _get_endianness(void);
-
 /**
- * load_blocks - After checking the header
- * `load_blocks` iterate through the Blockchain to
- * read and deserialize the blocks from data file save.hblk
- * @fd: opened file descriptor
- * @blocks: number of blocks
- *
- * Return: Pointer to linked list of blocks
- * bchain->chain
- *
+ * fread_transactions - read the transactions in blocks
+ * @block: Pointer to the Blocks of Blockchain
+ * @fr: File stream to read from
  */
 
-llist_t *load_blocks(int fd, uint32_t blocks)
+void fread_transactions(block_t *block, FILE *fr)
 {
-	llist_t *bchain = llist_create(MT_SUPPORT_TRUE);
-	block_t *block = NULL; /* here we gonna create blocks */
-	uint32_t idx;
+	int32_t i, j, tx_size = 0, tx_in = 0, tx_out = 0;
+	transaction_t *t_node;
+	tx_in_t *in_node;
+	tx_out_t *out_node;
 
-	for (idx = 0; idx < blocks; idx++)
+	fread(tx_size, 4, 1, fr);
+	if (tx_size == -1)
 	{
-		block = calloc(1, sizeof(*block));
-		if (!block)
-			return (NULL);
-		if (read(fd, &(block->info), sizeof(block_info_t)) < 0 ||
-			read(fd, &(block->data.len), sizeof(int)) < 0 ||
-			read(fd, block->data.buffer, block->data.len) < 0 ||
-			read(fd, block->hash, SHA256_DIGEST_LENGTH) < 0)
-			return (free(block), NULL);
-
-		if (llist_add_node(bchain, block, ADD_NODE_REAR) < 0)
-			return (free(block), NULL);
+		block->transactions = NULL;
+		return;
 	}
-	return (bchain);
+	block->transactions = llist_create(MT_SUPPORT_FALSE);
+	for (i = 0; i < tx_size; i++)
+	{
+		t_node = malloc(sizeof(transaction_t));
+		t_node->inputs = llist_create(MT_SUPPORT_FALSE);
+		t_node->outputs = llist_create(MT_SUPPORT_FALSE);
+		fread(&t_node->id, 32, 1, fr);
+		/* Read nb inputs & outputs */
+		fread(&tx_in, 4, 1, fr);
+		fread(&tx_out, 4, 1, fr);
+		for (j = 0; j < tx_in; j++)
+		{
+			in_node = malloc(sizeof(tx_in_t));
+			fread(in_node, 169, 1, fr);
+			llist_add_node(t_node->inputs, in_node, ADD_NODE_REAR);
+		}
+		for (j = 0; j < tx_out; j++)
+		{
+			out_node = malloc(sizeof(tx_out_t));
+			fread(out_node, 101, 1, fr);
+			llist_add_node(t_node->outputs, out_node, ADD_NODE_REAR);
+		}
+	}
+}
+
+/**
+ * check_header - check the header validity format
+ * @header: Pointer to header struct
+ * Return: 1 if valid, 0 otherwise
+ */
+
+int check_header(block_header_t *header)
+{
+	if (memcmp(header->magic, HBLK_MAGIC, 4) ||
+		(memcmp(header->version, HBLK_VERSION, 3)))
+		return (0);
+	return (1);
 }
 
 /**
@@ -51,38 +68,44 @@ llist_t *load_blocks(int fd, uint32_t blocks)
 
 blockchain_t *blockchain_deserialize(char const *path)
 {
-	int fd;
-	blockchain_t *Bchain = NULL;
-	char buf[BUFSIZE] = {0};
-	uint8_t endian;
-	uint32_t blocks = 0;
+	FILE *fr;
+	blockchain_t *bchain;
+	block_t *block;
+	uint32_t i;
+	block_header_t header;
+	unspent_tx_out_t *utxo;
 
-	if (!path)
-		return (NULL);
-	fd = open(path, O_RDONLY);
-	if (!fd)
-		return (NULL); /* read permission not set */
-	/* Let's go */
-	CLEAR_N_LOAD(strlen(HBLK_MAGIC));
-	if (strcmp(buf, HBLK_MAGIC))
+	fr = fopen(path, "rb");
+	if (!fr || !path)
 		return (NULL);
 
-	CLEAR_N_LOAD(strlen(HBLK_VERSION));
-	if (strcmp(buf, HBLK_VERSION))
+	fread(&header, sizeof(header), 1, fr);
+	if (!check_header(&header) || &header.blocks == 0)
+	{
+		fclose(fr);
 		return (NULL);
+	}
 
-	CLEAR_N_LOAD(1);
-	endian = *buf;
-	if (endian != _get_endianness())
-		return (NULL);
-
-	CLEAR_N_LOAD(4);
-	blocks = *buf;
-
-	Bchain = calloc(1, sizeof(*Bchain));
-	if (!Bchain)
-		return (NULL);
-	Bchain->chain = load_blocks(fd, blocks);
-	close(fd);
-	return (Bchain);
+	bchain = malloc(sizeof(blockchain_t));
+	bchain->chain = llist_create(MT_SUPPORT_FALSE);
+	bchain->unspent = llist_create(MT_SUPPORT_FALSE);
+	for (i = 0; i < header.blocks; i++)
+	{
+		block = malloc(sizeof(block_t));
+		fread(block, 1, sizeof(block->info), fr);
+		fread(&block->data.len, 1, 4, fr);
+		memset(&block->data.buffer, 0, 1024);
+		fread(&block->data.buffer, 1, block->data.len, fr);
+		fread(&block->hash, 32, 1, fr);
+		fread_transactions(block, fr);
+		llist_add_node(bchain->chain, block, ADD_NODE_REAR);
+	}
+	for (i = 0; i < header.unspent; i++)
+	{
+		utxo = malloc(sizeof(unspent_tx_out_t));
+		fread(utxo, 165, 1, fr);
+		llist_add_node(bchain->unspent, utxo, ADD_NODE_REAR);
+	}
+	fclose(fr);
+	return (bchain);
 }
