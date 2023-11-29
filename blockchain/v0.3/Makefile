@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-Wall -Wextra -Werror -pedantic -Wno-deprecated-declarations -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread
+CFLAGS=-Wall -Wextra -Werror -pedantic -Wno-deprecated-declarations -I. -Itransaction/ -Iprovided/ -I../../crypto -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread
 
 SRCLIB= $(wildcard *.c) $(wildcard transaction/*.c) $(wildcard provided/*.c)
 OBJLIB= $(SRCLIB:.c=.o)
