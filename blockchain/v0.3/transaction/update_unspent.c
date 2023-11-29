@@ -47,7 +47,7 @@ llist_t *update_unspent(llist_t *transactions,
 			tx = llist_get_node_at(transactions, j);
 			for (k = 0; k < llist_size(tx->inputs); k++)
 			{
-				in_node = llist_get_node_at(tx->inputs, j);
+				in_node = llist_get_node_at(tx->inputs, k);
 				if (unspent_match(utxo, in_node))
 					break;
 			}
