@@ -1,53 +1,19 @@
 CC = gcc
-AR = ar -rcs
-RM = rm -f
+CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu90 -ggdb3 -c -I. -Itransaction/ -Iprovided/ -I../../crypto -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread
 
-HDR_DIRS = . transaction ../../crypto
-CFLAGS = -Wall -Werror -Wextra -pedantic $(addprefix -I, $(HDR_DIRS))
-LDFLAGS = -u OpenSSLGlobalCleanup -L../../crypto
-LDLIBS = $(addprefix -l, ssl crypto hblk_crypto llist) -pthread
+SRC0 = $(wildcard *.c) $(wildcard transaction/*.c) $(wildcard provided/*.c)
+OBJ0 = $(SRC0:.c=.o)
+NAME0 = libhblk_blockchain.a
 
-HEADERS = blockchain.h transaction/transaction.h ../../crypto/hblk_crypto.h
-BLKCHN_SRC = blockchain_create.c \
-	block_create.c \
-	block_destroy.c \
-	blockchain_destroy.c \
-	block_hash.c \
-	blockchain_serialize.c \
-	blockchain_deserialize.c \
-	block_is_valid.c \
-	hash_matches_difficulty.c \
-	blockchain_difficulty.c \
-	block_mine.c
-TX_SRC = tx_out_create.c \
-	unspent_tx_out_create.c \
-	tx_in_create.c \
-	transaction_hash.c \
-	tx_in_sign.c \
-	transaction_create.c \
-	transaction_is_valid.c \
-	coinbase_create.c \
-	coinbase_is_valid.c \
-	transaction_destroy.c \
-	update_unspent.c
-PROV_SRC = _endianness.c
-
-OBJ = $(BLKCHN_SRC:.c=.o) $(addprefix transaction/, $(TX_SRC:.c=.o)) \
-	$(addprefix provided/, $(PROV_SRC:.c=.o))
-
-.PHONY: clean oclean fclean re
-
-libhblk_blockchain.a: $(HEADERS) $(OBJ)
-	$(AR) $@ $(OBJ)
-
-all: libhblk_blockchain.a
+.PHONY: clean oclean flcean libhblk_blockchain.a
 
 clean:
-	$(RM) *~ libhblk_blockchain.a
+	$(RM) *~ $(NAME0)
 
 oclean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ0)
 
 fclean: clean oclean
 
-re: oclean all
+libhblk_blockchain.a: blockchain.h transaction/transaction.h $(OBJ0)
+	ar rcs $(NAME0) $(OBJ0)
