@@ -3,63 +3,30 @@
 #define CMD "\033[31m"
 #define RESET "\033[0m"
 
-uint8_t *ec_to_pub_compress(EC_KEY const *key, uint8_t pub[EC_COMP])
-{
-	size_t pub_key_len = 0;
-	const EC_GROUP *group = NULL;
-	const EC_POINT *pkey_point = NULL;
-	EC_POINT *pubkey = NULL;
-	/* Actually the EC_KEY_get0_public_key return ? check proto*/
-	/* get the EC_POINT public key, we need an EC_POINT */
-	/* const EC_POINT *EC_KEY_get...(const EC_KEY *key)*/
+#define EC_COMP 33
 
-	/* sanity checks */
+void ec_compressed(EC_KEY *key, uint8_t pub[EC_COMP])
+{
+	size_t pubkey_len = 0, i;
+	const EC_GROUP *grp = NULL;
+	const EC_POINT *pkey = NULL;
+
 	if (!key || !pub)
-		return (NULL);
-
-	group = EC_KEY_get0_group(key);
-	/* EC_KEY_get0_public_key returns EC_POINT */
-	pkey_point = EC_KEY_get0_public_key(key);
-
-	if (!group || !pkey_point)
-		return (NULL);
-
-	/* copy for not modifying original ? */
-	pubkey = EC_POINT_new(group);
-	if (!EC_POINT_copy(pubkey, pkey_point))
-	{
-		EC_POINT_free(pubkey);
-		return (NULL);
-	}
-	/* EC_POINT_point2oct => returns size_t // encodes */
-	/* given curve point as octect string */
-	pub_key_len = EC_POINT_point2oct(group, pubkey, 4, NULL, 0, NULL);
-	if (pub_key_len > EC_PUB_LEN)
-	{
-		EC_POINT_free(pubkey);
-		return (NULL);
-	}
-	EC_POINT_point2oct(group, pubkey, 4, pub, pub_key_len, NULL);
-	EC_POINT_free(pubkey);
-
-	return (pub);
-}
-
-void display_compressed(EC_KEY *key)
-{
-	uint8_t buff[EC_COMP];
-	const EC_GROUP *grp = EC_KEY_get0_group(key);
-	EC_KEY *comp = EC_KEY_new();
-
-	if (!EC_KEY_set_group(comp, grp))
-	{
-		fprintf(stderr, "Failed to set group for compressed key\n");
-		EC_KEY_free(comp);
 		return;
-	}
-	EC_KEY_set_conv_form(comp, POINT_CONVERSION_COMPRESSED);
-	ec_to_pub_compress(comp, buff);
-	_print_hex_buffer(buff, EC_COMP);
+
+	grp = EC_KEY_get0_group(key);
+	pkey = EC_KEY_get0_public_key(key);
+	if (!grp || !pkey)
+		return;
+
+	EC_KEY_set_conv_form((EC_KEY *)key, POINT_CONVERSION_COMPRESSED);
+	pubkey_len = EC_POINT_point2oct(grp, pkey, POINT_CONVERSION_COMPRESSED, NULL, 0, NULL);
+	if (pubkey_len != EC_COMP)
+		return;
+
+	EC_POINT_point2oct(grp, pkey, POINT_CONVERSION_COMPRESSED, pub, pubkey_len, NULL);
+	for (i = 0; i < EC_COMP; i++)
+		printf("%02x", pub[i]);
 	printf("\n");
 }
 
@@ -72,6 +39,7 @@ int cmd_wallet_load(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char 
 {
 	int choice;
 	EC_KEY *out;
+	uint8_t pub[EC_COMP];
 
 	if (arg1 == NULL)
 	{
@@ -101,7 +69,7 @@ int cmd_wallet_load(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char 
 		return (fprintf(stderr, "Failed to load from folder %s\n", arg1), 0);
 	*key = out;
 	printf("Wallet loaded successfully\n");
-	display_compressed(*key);
+	ec_compressed(*key, pub);
 	return (1);
 	(void)bc;
 	(void)active;
