@@ -11,9 +11,9 @@ int (*check_builtin(char *cmd))(bc_t **, block_t **, EC_KEY **, char *, char *)
 	built_in_t bucket[] = {
 		{"wallet_load", &cmd_wallet_load},
 		{"help", &cli_docs},
+		{"wallet_save", &cmd_wallet_save},
 		{NULL, NULL},
-		/* {"wallet_save", &cmd_wallet_save},
-		{"send", &send_amount_addr},
+		/* {"send", &send_amount_addr},
 		{"mine", &mine_a_block},
 		{"exit", &_exit}, */
 	};

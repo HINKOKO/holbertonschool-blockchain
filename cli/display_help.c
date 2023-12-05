@@ -13,6 +13,7 @@ int cli_docs(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *arg2)
 	printf("**********CLI MAN PAGE************\n");
 	printf("Available commands are:\n");
 	printf("%s\twallet_load <path>%s\n\t\tLoads a wallet from a path file or folder containing pair of EC KEY\n", CMD, RESET);
+	printf("%s\twallet_save <path>%s\n\t\t Saves key-pair (string) to the folder given as path\n", CMD, RESET);
 	printf("%s\t help%s\n\t\tDisplay this help page\n", CMD, RESET);
 	return (0);
 	(void)bc;

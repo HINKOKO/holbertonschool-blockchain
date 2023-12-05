@@ -9,19 +9,8 @@ EC_KEY *generate_default_key()
 	return (default_wallet);
 }
 
-/*void clear_screen()
-{
-	printf("\033[2J\033[H");
-	fflush(stdout);
-} */
-
 /**
  * main - Entry point
- *
- * ssize_t getline(char **lineptr, size_t *n, FILE *stream);
- * reads an entire line from `stream`, storing the address of the buffer containing text into `lineptr`
- * (includes newline character, if one was found)
- *
  */
 
 int main(void)

@@ -29,6 +29,7 @@ int (*check_builtin(char *cmd))(bc_t **, block_t **, EC_KEY **, char *, char *);
 /* Prototypes for commands handling */
 int cmd_wallet_load(bc_t **, block_t **, EC_KEY **, char *, char *);
 void ec_compressed(EC_KEY *key, uint8_t pub[EC_COMP]);
+int cmd_wallet_save(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *arg2);
 
 int cli_docs(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *arg2);
 
