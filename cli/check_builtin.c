@@ -13,7 +13,7 @@ int (*check_builtin(char *cmd))(bc_t **, block_t **, EC_KEY **, char *, char *)
 		{"help", &cli_docs},
 		{"wallet_save", &cmd_wallet_save},
 		{NULL, NULL},
-		/* {"send", &send_amount_addr},
+		/* {"send", &cmd_send_coins},
 		{"mine", &mine_a_block},
 		{"exit", &_exit}, */
 	};

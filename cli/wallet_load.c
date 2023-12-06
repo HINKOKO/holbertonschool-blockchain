@@ -1,8 +1,5 @@
 #include "cli.h"
 
-#define CMD "\033[31m"
-#define RESET "\033[0m"
-
 #define EC_COMP 33
 
 void ec_compressed(EC_KEY *key, uint8_t pub[EC_COMP])
@@ -37,38 +34,20 @@ void ec_compressed(EC_KEY *key, uint8_t pub[EC_COMP])
 
 int cmd_wallet_load(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *arg2)
 {
-	int choice;
 	EC_KEY *out;
 	uint8_t pub[EC_COMP];
 
 	if (arg1 == NULL)
 	{
-		printf("Usage: wallet_load <path>\n");
-		printf("%sNote that the CLI loaded by default a key-pair%s\n", CMD, RESET);
-		printf("\tPress %s1%s for using default\n\tPress %s2%s to go back to home\n", CMD, RESET, CMD, RESET);
-		if (scanf("%d", &choice) != 1)
-			return (fprintf(stderr, "Invalid Input\n"), 0);
-		switch (choice)
-		{
-		case 1:
-			out = ec_load("./beta");
-			*key = out;
-			printf("Default key set successfully\n");
-			return (1);
-		case 2:
-			printf("Going back to CLI home\n");
-			return (0);
-		default:
-			fprintf(stderr, "Invalid choice\n");
-			return (0);
-		}
+		fprintf(stderr, "Usage: wallet_load <path>\n");
+		return (0);
 	}
 
 	out = ec_load(arg1);
 	if (!out)
 		return (fprintf(stderr, "Failed to load from folder %s\n", arg1), 0);
 	*key = out;
-	printf("Wallet loaded successfully\n");
+	printf("Wallet loaded successfully \n");
 	ec_compressed(*key, pub);
 	return (1);
 	(void)bc;
