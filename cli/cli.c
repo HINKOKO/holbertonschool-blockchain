@@ -48,9 +48,10 @@ EC_KEY *handle_the_load()
 		out = generate_default_key();
 		printf("Wallet loaded successfully - PubKey (from default folder) => ");
 	}
-	if (choice == '2')
+	else if (choice == '2')
 		return (NULL);
-	printf("Invalid choice\n");
+	else
+		printf("Invalid choice\n");
 
 	return (out);
 }

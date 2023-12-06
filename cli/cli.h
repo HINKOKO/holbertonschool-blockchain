@@ -19,6 +19,14 @@
 
 typedef blockchain_t bc_t;
 
+/**
+ * built_in_s - Struct to map command strings
+ * to corresponding functions of the CLI
+ * @cmd: pointer to string command passed
+ * @f: function pointer to corresponding function
+ * handling that command
+ */
+
 typedef struct built_in_s
 {
 	char *cmd;
