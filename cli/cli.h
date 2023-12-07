@@ -17,6 +17,23 @@
 #include <hblk_crypto.h>
 #include <transaction.h>
 
+typedef struct local_tx
+{
+	llist_t *tx_pool;
+} local_tx_t;
+
+typedef struct bc_data
+{
+	blockchain_t *bc;
+	EC_KEY *key;
+	llist_t *tx_pool;
+} bc_data_t;
+
+#define BC_INIT          \
+	{                    \
+		NULL, NULL, NULL \
+	}
+
 typedef blockchain_t bc_t;
 
 /**

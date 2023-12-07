@@ -1,16 +1,53 @@
 #include "cli.h"
+#include <ctype.h>
 
-int pack_key(const char *arg, uint8_t pub[EC_PUB_LEN])
+/*int pack_key(char *arg, uint8_t pub[EC_PUB_LEN])
 {
-	int i, len = strlen(arg);
+	uint32_t i = 0, j = 0, left, right;
 
-	if (len != (2 * EC_PUB_LEN))
+	if (strlen(arg) != 130)
 		return (0);
 
+	while (i < EC_PUB_LEN)
+	{
+		left = arg[j];
+		if (left >= 97)
+			left -= 87;
+		else
+			left -= 48;
+		right = arg[j + 1];
+		if (right >= 97)
+			right -= 87;
+		else
+			right -= 48;
+
+		if (left > 15 || right > 15)
+			return (0);
+
+		pub[i] = left << 4;
+		pub[i] += right;
+		j += 2;
+		i += 1;
+	}
+	return (1);
+} */
+
+int pack_key(char *arg, uint8_t pub[EC_PUB_LEN])
+{
+	size_t i, len_key = strlen(arg);
+
+	if (len_key != 130)
+	{
+		fprintf(stderr, "Wrong key length :// \n");
+		return (0);
+	}
 	for (i = 0; i < EC_PUB_LEN; i++)
 	{
-		if (sscanf(arg + (i * 2), "%2x", (unsigned int *)&pub[i]) < 1)
-			break;
+		if (sscanf(&arg[i * 2], "%2x", (unsigned int *)&pub[i]) < 1)
+		{
+			fprintf(stderr, "packing failed\n");
+			return (0);
+		}
 	}
 	return (1);
 }
@@ -28,6 +65,7 @@ int cmd_send_coins(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *
 {
 	uint32_t amount;
 	EC_KEY *receiver;
+	local_tx_t *tx_pool = NULL;
 	transaction_t *tx;
 	uint8_t pub[EC_PUB_LEN] = {0};
 
@@ -36,6 +74,7 @@ int cmd_send_coins(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *
 		fprintf(stderr, "Usage: send <amount> <address>\n");
 		return (0);
 	}
+
 	/* Cooking arguments */
 	amount = atoi(arg1);
 	if (!amount)
@@ -43,7 +82,7 @@ int cmd_send_coins(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *
 
 	/* Handle the key -> back to a pub buffer */
 	if (!pack_key(arg2, pub))
-		return (fprintf(stderr, "Sorry, problem with the provided key\n"), 0);
+		return (fprintf(stderr, "Problem with recipient key\n"), 0);
 
 	receiver = ec_from_pub(pub);
 	if (!receiver)
@@ -55,8 +94,11 @@ int cmd_send_coins(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *
 		EC_KEY_free(receiver);
 		return (fprintf(stderr, "Transaction failed\n"), 0);
 	}
-	llist_add_node((*active)->transactions, tx, ADD_NODE_REAR);
+	tx_pool->tx_pool = llist_create(MT_SUPPORT_FALSE);
+	llist_add_node(tx_pool->tx_pool, tx, ADD_NODE_REAR);
+	/* llist_add_node((*active)->transactions, tx, ADD_NODE_REAR); */
 	EC_KEY_free(receiver);
 	printf("Transaction completed successfully\n");
 	return (1);
+	(void)active;
 }

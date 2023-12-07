@@ -35,7 +35,7 @@ void ec_compressed(EC_KEY *key, uint8_t pub[EC_COMP])
 int cmd_wallet_load(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char *arg2)
 {
 	EC_KEY *out;
-	uint8_t pub[EC_COMP];
+	uint8_t pub[EC_PUB_LEN];
 
 	if (arg1 == NULL)
 	{
@@ -48,7 +48,11 @@ int cmd_wallet_load(bc_t **bc, block_t **active, EC_KEY **key, char *arg1, char 
 		return (fprintf(stderr, "Failed to load from folder %s\n", arg1), 0);
 	*key = out;
 	printf("Wallet loaded successfully \n");
-	ec_compressed(*key, pub);
+	/* ec_compressed(*key, pub); */
+	ec_to_pub(*key, pub);
+	_print_hex_buffer(pub, EC_PUB_LEN);
+	printf("\n");
+
 	return (1);
 	(void)bc;
 	(void)active;

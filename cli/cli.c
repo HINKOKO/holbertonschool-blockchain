@@ -64,7 +64,8 @@ EC_KEY *handle_the_load()
 int main(void)
 {
 	EC_KEY *beta, *out;
-	uint8_t pub[EC_COMP];
+	/* uint8_t pub[EC_COMP]; */
+	uint8_t pub[EC_PUB_LEN];
 	blockchain_t *bc;
 	block_t *active;
 	char *line = NULL, *cmd, *arg1, *arg2;
@@ -74,6 +75,7 @@ int main(void)
 
 	beta = generate_default_key();
 	bc = blockchain_create();
+	bc->unspent = llist_create(MT_SUPPORT_TRUE);
 	active = llist_get_head(bc->chain);
 	active = block_create(active, (int8_t *)"Blockchainers", 13);
 
@@ -96,7 +98,12 @@ int main(void)
 		{
 			out = handle_the_load();
 			if (out)
-				ec_compressed(out, pub);
+			{
+				/* ec_compressed(out, pub); */
+				ec_to_pub(out, pub);
+				_print_hex_buffer(pub, EC_PUB_LEN);
+				printf("\n");
+			}
 			continue;
 		}
 		func = check_builtin(cmd);
